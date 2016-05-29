@@ -15,31 +15,35 @@
 <?php
 require_once('db.config.php');
 include('functions.php');
-if(!connectdb())die('Database Connection Error! <br/>'.mysql_error());
+if(!$conn)die('Database Connection Error! <br/>'.mysqli_connect_error());
 
 echo '<div id="main">';
 			echo '<nav>';
 			echo '<div class="navigation">';
 			echo '<ul>';
 			
-			$fcats = mysql_query("SELECT id, name, slug, color, icon FROM menu ORDER BY position");
-			while($fcat=mysql_fetch_array($fcats))
+			$sql = "SELECT * FROM menu ORDER BY position";
+			$query = mysqli_query($conn,$sql);
+			if(mysqli_num_rows($query)>0)
 			{
-			if ($fcat[2]=='')
+			while($fcat=mysqli_fetch_assoc($query))
 			{
-			echo '<li class="'.clean($fcat[1]).'"><a href="/'.$fcat[2].'">'.$fcat[4].' '.$fcat[1].'</a></li>';
+			if ($fcat['slug']=='')
+			{
+			echo '<li class="'.clean($fcat['name']).'"><a href="/'.$fcat['slug'].'">'.$fcat['icon'].' '.$fcat['name'].'</a></li>';
 			}
 			else
 			{
-			echo '<li class="'.clean($fcat[1]).'"><a href="/'.$fcat[2].'/">'.$fcat[4].' '.$fcat[1].'</a></li>';
+			echo '<li class="'.clean($fcat['name']).'"><a href="/'.$fcat['slug'].'/">'.$fcat['icon'].' '.$fcat['name'].'</a></li>';
 			}
 			}
-			
+			}
 echo '</ul>';
 echo '</div>';
 echo '</nav>';
 
 echo '</div>';
+mysqli_close($conn);
 ?>
 <h1 class="text-center">Dynamic Multi-Color Menu</h1>
 </body>
